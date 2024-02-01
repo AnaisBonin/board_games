@@ -2,22 +2,37 @@ package fr.lecampusnumerique.cda2025.javaalgo.boardgames.games;
 
 import fr.lecampusnumerique.cda2025.javaalgo.boardgames.board.Board;
 import fr.lecampusnumerique.cda2025.javaalgo.boardgames.players.Player;
-import fr.lecampusnumerique.cda2025.javaalgo.boardgames.players.TicTacToePlayer;
-import fr.lecampusnumerique.cda2025.javaalgo.boardgames.symbols.TicTacToeSymbol;
+import fr.lecampusnumerique.cda2025.javaalgo.boardgames.symbols.Symbol;
 import fr.lecampusnumerique.cda2025.javaalgo.boardgames.victoryChecker.VictoryChecker;
 
+import java.util.Scanner;
+
 public abstract class AbstractGame implements Game {
+    private GameIdentity gameIdentity;
     private Player player1;
     private Player player2;
-
+    private Symbol[] symbols;
     private final Board board;
     private boolean isOver;
 
-    VictoryChecker victoryChecker = new VictoryChecker(0);
+    private Scanner scanner = new Scanner(System.in);
 
+    private VictoryChecker victoryChecker = new VictoryChecker(0);
 
-    public AbstractGame(int amountOfRows, int amountOfColumns) {
+    abstract void defineSymbols();
+
+    public AbstractGame(GameIdentity gameIdentity, int amountOfRows, int amountOfColumns) {
+        this.gameIdentity = gameIdentity;
         this.board = new Board(amountOfRows, amountOfColumns);
+        defineSymbols();
+    }
+
+    public Symbol[] getSymbols() {
+        return symbols;
+    }
+
+    public void setSymbols(Symbol[] symbols) {
+        this.symbols = symbols;
     }
 
     protected boolean getIsOver() {
@@ -29,17 +44,34 @@ public abstract class AbstractGame implements Game {
     }
 
 
-    public void play(Games game) {
-        System.out.println(" We are playing " + game.getName());
-        player1 = new TicTacToePlayer(1, TicTacToeSymbol.X, false);
-        player2 = new TicTacToePlayer(2, TicTacToeSymbol.O, false);
+    public void play() {
+        System.out.println(" We are playing " + this.gameIdentity.getName());
+        definePlayers();
 
         Player currentPlayer = player1;
         while (!board.isFull() && !victoryChecker.getIsVictory()) {
             playerTurn(currentPlayer);
             currentPlayer = switchPlayer(currentPlayer);
+            board.displayBoard();
         }
         System.out.println("Game over or victory");
+    }
+
+    private void buildPlayers(int players){
+        boolean isPlayer1Artificial = players == 0;
+        boolean isPlayer2Artificial = players == 0 || players == 1;
+
+        player1 = new Player(1, symbols[0], isPlayer1Artificial);
+        player2 = new Player(2, symbols[1], isPlayer2Artificial);
+    }
+
+    private void definePlayers(){
+        int howManyPlayers;
+        System.out.println("How many players want to play? ");
+        System.out.println("Press 2 for 2 players |  1 to play against computer |  or 0 to watch the computer playing!");
+        howManyPlayers = Integer.parseInt(scanner.next());
+
+        buildPlayers(howManyPlayers);
     }
 
     public void stop() {    }
@@ -48,6 +80,7 @@ public abstract class AbstractGame implements Game {
 
 
     public void playerTurn(Player player) {
+        System.out.println("Player turn, playing move " + player.getRepresentation());
         int[] move = player.getPlayerMove();
 
 
