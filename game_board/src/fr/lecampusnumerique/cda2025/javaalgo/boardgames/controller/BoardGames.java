@@ -1,18 +1,17 @@
-package fr.lecampusnumerique.cda2025.javaalgo.boardgames;
+package fr.lecampusnumerique.cda2025.javaalgo.boardgames.controller;
 
-import fr.lecampusnumerique.cda2025.javaalgo.boardgames.games.*;
+import fr.lecampusnumerique.cda2025.javaalgo.boardgames.controller.games.*;
+import fr.lecampusnumerique.cda2025.javaalgo.boardgames.model.GameFactory;
 import fr.lecampusnumerique.cda2025.javaalgo.boardgames.view.UserInteraction;
+import fr.lecampusnumerique.cda2025.javaalgo.boardgames.view.View;
 
 public class BoardGames {
     private GameIdentity selectedGame;
 
     private final UserInteraction userInteraction = new UserInteraction();
+    private final View view = new View();
 
     public BoardGames() {
-    }
-
-    public GameIdentity getSelectedGame() {
-        return selectedGame;
     }
 
     private void setSelectedGame(GameIdentity selectedGame) {
@@ -29,16 +28,17 @@ public class BoardGames {
     }
 
     public void selectGame() {
-        int playerSelection = userInteraction.getGameChoice();
-        setSelectedGame(findGame(playerSelection));
+        GameIdentity[] gamesList = GameIdentity.values();
 
-        System.out.println("Perfect! Let's play " + getSelectedGame().getName());
+        view.displayChooseGame(gamesList);
+        int playerSelection = userInteraction.getIntChoice(1, gamesList.length);
 
+        setSelectedGame(findGame(playerSelection - 1));
         launchGame();
     }
 
     private void launchGame() {
-        Game currentGame = GameFactory.createGame(selectedGame);
-        currentGame.play();
+        IGame game = GameFactory.createGame(selectedGame);
+        game.play();
     }
 }

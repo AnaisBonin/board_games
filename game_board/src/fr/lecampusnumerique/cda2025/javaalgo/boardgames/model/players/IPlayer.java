@@ -1,6 +1,6 @@
-package fr.lecampusnumerique.cda2025.javaalgo.boardgames.players;
+package fr.lecampusnumerique.cda2025.javaalgo.boardgames.model.players;
 
-import fr.lecampusnumerique.cda2025.javaalgo.boardgames.symbols.Symbol;
+import fr.lecampusnumerique.cda2025.javaalgo.boardgames.model.symbols.Symbol;
 
 public interface IPlayer {
 
@@ -16,6 +16,6 @@ public interface IPlayer {
 
     String getRepresentation();
 
-    int[] getPlayerMove();
+    int[] getPlayerMove(int max);
     void playerTurn();
 }
